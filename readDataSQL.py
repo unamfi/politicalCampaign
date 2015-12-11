@@ -14,4 +14,7 @@ cur = db.cursor()
 cur.execute("SELECT * FROM post;")
 # print all the first cell of all the rows
 for row in cur.fetchall():
-    print row[0]
+   date=row[3]
+   if not date==None:
+   	print date
+    #break
