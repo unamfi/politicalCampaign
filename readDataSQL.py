@@ -24,18 +24,35 @@ def getPostDataFrom():
  		if not date==None:
  			numPosts+=1
 			print date
-   			dates.setdefault(date,[])
-   			
-			postText=row[11]
-			textoComplete=row[12]
-			#if "video" in url:
-			#print "ES VIDEO"
+   			dates.setdefault(date,{})
+			tipoPost=row[11]
+			texto=row[12]
 			url=row[10]
-			print postText
-			print textoComplete
+			dates[date].setdefault(tipoPost,{})
+			dates[date][tipoPost][url]=texto
+			print tipoPost
+			print texto
 			print url
+			print
+			#dicionarioPost["tituloPost"]=titlePostText
+			#dicionarioPost["texto"]=texto
+			#dicionarioPost["url"]=url
    			#break
    	print numPosts
+   	sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
+   	numUrl=0
+   	for d,v in sorted_dates:
+   		print d
+   		tipoPosts=dates[d]
+   		for t in tipoPosts:
+   			print t
+   			webs=tipoPosts[t]
+   			for w in webs:
+   				print w
+   				numUrl+=1
+   	print numUrl
+   	print numPosts
+
 
 
 getPostDataFrom()
