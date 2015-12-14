@@ -22,36 +22,59 @@ def getPostDataFrom():
 		
 		date=row[3]
  		if not date==None:
- 			numPosts+=1
+ 			
 			print date
-   			dates.setdefault(date,{})
 			tipoPost=row[11]
 			texto=row[12]
 			url=row[10]
-			dates[date].setdefault(tipoPost,{})
-			dates[date][tipoPost][url]=texto
-			print tipoPost
-			print texto
-			print url
-			print
+   			
+   			if not tipoPost==None:
+				dates.setdefault(date,{})
+				dates[date].setdefault(tipoPost,{})
+				dates[date][tipoPost][url]=texto
+				print tipoPost
+				print texto
+				print url
+				numPosts+=1
+				print
 			#dicionarioPost["tituloPost"]=titlePostText
 			#dicionarioPost["texto"]=texto
 			#dicionarioPost["url"]=url
    			#break
    	print numPosts
    	sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
-   	numUrl=0
+   	#numUrl=0
+   	tipoPostsCount={}
+   	#i=0
    	for d,v in sorted_dates:
-   		print d
+   	#	if i==0:
+   	#		print d
+   	#	i+=1
    		tipoPosts=dates[d]
    		for t in tipoPosts:
-   			print t
-   			webs=tipoPosts[t]
-   			for w in webs:
-   				print w
-   				numUrl+=1
-   	print numUrl
-   	print numPosts
+
+   			tipoPostsCount.setdefault(t,0)
+   			tipoPostsCount[t]+=1
+   			#print t
+   	#		webs=tipoPosts[t]
+   	#		for w in webs:
+   			#	print w
+   	#			numUrl+=1
+   	#print d
+   	#print numUrl
+   	#print numPosts
+   	sorted_tipoPostsCount = sorted(tipoPostsCount.items(), key=operator.itemgetter(1),reverse=True)
+   	m=0
+   	for t,v in sorted_tipoPostsCount:
+   		if m<20:
+   			print t+","+str(v)
+   		else:
+   			break
+   		m+=1
+   		#print t+","
+   		#print v
+   		#break
+
 
 
 
