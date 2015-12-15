@@ -25,24 +25,9 @@ def getNumPhotosVideoShared():
    urlKeywords["ustream"]=0
    urlKeywords["/envivo"]=0
    urlKeywords["audiolive"]=0
-   #audiolive
-
-   #http://www.cetys.mx/envivo
-   #video
-   #periscope
-   #soundcloud
-   #thinglink
-   #photo
-   #youtu.be
-   #youtube
-   #/transmisiones/envivo.aspx
-   #ustream
-   #libre/players/mmplayer.
-   #urlKeywords={}
-   #urlKeywords
-
-
+   
    numPostsVideo=0
+   totalPosts=0
    dates = pickle.load(open("postsDates.p", "rb"))
    FILE=open("trash.txt",'w')
    tiposTotales={}
@@ -58,6 +43,7 @@ def getNumPhotosVideoShared():
             if keyword in tLower:
                #print "Found:"+t
                numPostsVideo+=len(tipoPosts[t])
+               totalPosts+=len(tipoPosts[t])
                foundItsMedia=True
                break
          if not foundItsMedia:
@@ -71,16 +57,26 @@ def getNumPhotosVideoShared():
                   if keywordU in u:
                      foundKeyordUrl=True
                      #numPostsVideo+=1
-                     print u
+                     print "..actually i found something:"+str(u)
                      break
                if foundKeyordUrl:
                   numPostsVideo+=1
+                  totalPosts+=1
                else:
                   
                   FILE.write(u+"\n")
+                  totalPosts+=1
          FILE.write("\n")
    print numPostsVideo
+   print totalPosts
+   percentageFotos=getPercentage(totalPosts, numPostsVideo)
+   print "Percentage Fotos:"+str(percentageFotos)
    FILE.close()
+
+def getPercentage(total, indivAmount):
+   indivAmount=indivAmount*100
+   indivAmount=float(float(indivAmount)/float(total))
+   return indivAmount
 
 
 
