@@ -4,6 +4,7 @@ import operator
 import pickle
 
 def getNumPhotosVideoShared():
+   urlsFinal={}
    videoKeywords={}
    videoKeywords["periscope"]=0
    videoKeywords["mobile uploads"]=0
@@ -29,7 +30,7 @@ def getNumPhotosVideoShared():
    numPostsVideo=0
    totalPosts=0
    dates = pickle.load(open("postsDates.p", "rb"))
-   FILE=open("trash.txt",'w')
+   
    tiposTotales={}
    for d in dates:
       #print d
@@ -45,12 +46,20 @@ def getNumPhotosVideoShared():
                numPostsVideo+=len(tipoPosts[t])
                totalPosts+=len(tipoPosts[t])
                foundItsMedia=True
+               links=tipoPosts[t]
+               for l in links:
+                  urlsFinal.setdefault(l,0)
+                  urlsFinal[l]+=1
+
+               #urlsFinal
                break
          if not foundItsMedia:
             print "Not found:"+t
-            FILE.write("Tipo:"+str(t)+"\n************\n")
+           # FILE.write("Tipo:"+str(t)+"\n************\n")
             urls=tipoPosts[t]
             for u in urls:
+               urlsFinal.setdefault(u,0)
+               urlsFinal[u]+=1
                u=u.lower()
                foundKeyordUrl=False
                for keywordU in  urlKeywords:
@@ -64,14 +73,17 @@ def getNumPhotosVideoShared():
                   totalPosts+=1
                else:
                   
-                  FILE.write(u+"\n")
+                  #FILE.write(u+"\n")
                   totalPosts+=1
-         FILE.write("\n")
+         #FILE.write("\n")
    print numPostsVideo
    print totalPosts
    percentageFotos=getPercentage(totalPosts, numPostsVideo)
    print "Percentage Fotos:"+str(percentageFotos)
-   FILE.close()
+   #FILE.close()
+   for u in urlsFinal:
+      print u
+
 
 def getPercentage(total, indivAmount):
    indivAmount=indivAmount*100
