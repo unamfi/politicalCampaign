@@ -31,8 +31,20 @@ def firstRun():
 		print i
 	pickle.dump(miDict, open("dictTest.p", "wb"))
 
-firstRun()
-secondRun()
+def getFollowers():
+
+#def followers_info(self):
+#"""Retrieves the id of my followers
+#"""
+#ids = []
+#@for page in tweepy.Cursor(self.api.followers_ids,screen_name= self.screen_name).pages():
+#ids.extend(page)
+#time.sleep(60)
+#save_to_int("array_ids.txt",ids)
+#return ids
+
+#firstRun()
+#secondRun()
 
 
 	#dates = pickle.load(open("postsDates.p", "rb"))

@@ -2,6 +2,7 @@
 import MySQLdb
 import operator
 import pickle
+import datetime
 
 def getNumPhotosVideoShared():
    urlsFinal={}
@@ -32,11 +33,19 @@ def getNumPhotosVideoShared():
    dates = pickle.load(open("postsDates.p", "rb"))
    
    tiposTotales={}
+   tiposTotalesYear={}
+
+
    for d in dates:
+      year=d.year
+      tiposTotalesYear.setdefault(year,{})
       #print d
       tipoPosts=dates[d]
       for t in tipoPosts:
          tiposTotales.setdefault(t,0)
+         tiposTotalesYear[year].setdefault(t,0)
+         tiposTotalesYear[year][t]+=len(tipoPosts[t])
+
          tiposTotales[t]+=len(tipoPosts[t])
          tLower=t.lower()
          foundItsMedia=False
@@ -80,9 +89,13 @@ def getNumPhotosVideoShared():
    print totalPosts
    percentageFotos=getPercentage(totalPosts, numPostsVideo)
    print "Percentage Fotos:"+str(percentageFotos)
+   #pickle.dump(tiposTotales, open("postsDates.p", "wb"))
+   #tiposTotales
+
+
    #FILE.close()
-   for u in urlsFinal:
-      print u
+   #for u in urlsFinal:
+   #   print u
 
 
 def getPercentage(total, indivAmount):
@@ -106,6 +119,148 @@ def getPercentage(total, indivAmount):
       #FILE.write(t+"\n")
    #FILE.close()
    #pickle.dump(dates, open("postsDates.p", "wb"))
+
+#pickle.dump(dates, open("postsDates.p", "wb"))
+
+def isMedia(tipo):
+   videoKeywords={}
+   videoKeywords["periscope"]=0
+   videoKeywords["mobile uploads"]=0
+   videoKeywords["photo"]=0
+   videoKeywords["video"]=0
+   videoKeywords["soundcloud"]=0
+   videoKeywords["thinglink"]=0
+   videoKeywords["photo"]=0
+   videoKeywords["youtu.be"]=0
+   videoKeywords["youtube"]=0
+   videoKeywords["/transmisiones/envivo.aspx"]=0
+   videoKeywords["ustream"]=0
+   videoKeywords["libre/players/mmplayer"]=0
+   videoKeywords["ustream"]=0
+   videoKeywords["ustream"]=0
+   videoKeywords["/envivo"]=0
+   videoKeywords["audiolive"]=0
+
+   for keyword in videoKeywords:
+      if keyword in tipo:
+         #print "FOund it!:"+str(tipo)
+         return True
+
+          #  if keyword in tLower:
+
+
+def getTypeContentPost():
+   dates = pickle.load(open("postsDates.p", "rb"))
+
+   
+
+   typeContentPerYear={}
+   typeContentPerYearUrl={}
+   for d in dates:
+      year=d.year
+      #print year
+      typeContentPerYear.setdefault(year,{})
+      tipoPosts=dates[d]
+      for tipo in tipoPosts:
+         #print t
+         tLower=tipo.lower()
+         if isMedia(tLower):
+            tipoFinal="Media"
+            #typeContentPerYear[year].setdefault(tipoFinal,0)
+            #typeContentPerYear[year][tipoFinal]+=1
+         else:
+            tipoFinal="Text"
+         typeContentPerYear[year].setdefault(tipoFinal,0)
+         typeContentPerYear[year][tipoFinal]+=len(tipoPosts[tipo])
+
+   totalYear={}
+   totalTodosYears=0
+   for year in typeContentPerYear:
+      print year
+
+      tipos=typeContentPerYear[year]
+      #print len(tipos)
+      totalContent=0
+      for t in tipos:
+         totalTipo=tipos[t]
+         totalContent+=totalTipo
+         #print t+","+str(totalTipo)
+      totalYear[year]=totalContent
+      totalTodosYears+=totalContent
+      for t in tipos:
+         totalTipo=tipos[t]
+         percentageTipo=getPercentage(totalContent,totalTipo)
+         
+         print t+","+str(percentageTipo)
+      print
+
+   for y in totalYear:
+      #print str(y)+","+str(totalYear[y])
+      percentageTipo=getPercentage(totalTodosYears,totalYear[y])
+      print str(y)+","+str(percentageTipo)+"/%"
+
+
+
+
+         #percentageTipo=getPercentage(totalPosts, numPostsVideo)
+   #print totalContent
+
+
+
+
+
+
+
+
+
+      #for t in tipoPosts:
+       #  tiposTotales.setdefault(t,0)
+        # tiposTotalesYear[year].setdefault(t,0)
+        # tiposTotalesYear[year][t]+=len(tipoPosts[t])
+
+         #tiposTotales[t]+=len(tipoPosts[t])
+         #tLower=t.lower()
+         #foundItsMedia=False
+         #for keyword in videoKeywords:
+          #  if keyword in tLower:
+               #print "Found:"+t
+           #    numPostsVideo+=len(tipoPosts[t])
+            #   totalPosts+=len(tipoPosts[t])
+             #  foundItsMedia=True
+              # links=tipoPosts[t]
+               #for l in links:
+                #  urlsFinal.setdefault(l,0)
+                 # urlsFinal[l]+=1
+
+
+   
+
+def getPercentageFotosYears():
+   getTypeContentPost()
+
+   #dates = pickle.load(open("postsDates.p", "rb"))
+
+  # for d in dates:
+   #   year=d.year
+      
+
+
+
+def getEarliestLatestDate():
+   dates = pickle.load(open("postsDates.p", "rb"))
+   sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
+   i=0
+   for d,v in sorted_dates:
+      if i==0:
+         first=d
+      i+=1
+         #print d
+   last=d
+   print first
+   print last
+      #2012-11-07 22:00:53
+
+
 
 def getDatesPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -228,11 +383,16 @@ def getPostDataFrom():
       #print numPosts
    		
 
-
+getTypeContentPost()
+#getDatesPost()
+#getNumPhotosVideoShared()
+#getEarliestLatestDate()
+#getPercentageFotosYears()
+#getNumPhotosVideoShared()
 
 #getPostDataFrom()
 #getDatesPost()
-getNumPhotosVideoShared()
+#getNumPhotosVideoShared()
 
 #sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
 #for d,v in sorted_dates:
