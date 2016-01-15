@@ -261,6 +261,40 @@ def getEarliestLatestDate():
       #2012-11-07 22:00:53
 
 
+def getCommentsPost():
+   db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+                     user="root",         # your username
+                     passwd="nathan",  # your password
+                     db="politics")        # name of the data base
+   cur = db.cursor()
+   # Use all the SQL you like
+   cur.execute("SELECT * FROM comment;")
+   print "got comments!"
+   posts={}
+   for row in cur.fetchall():
+      print row
+      idComment=row[0]
+      idPost=row[1]
+      fbLink=row[2]
+      user=row[3]
+      message=row[4]
+      time=row[6]
+      likeCount=row[7]
+      userLike=row[8]
+      posts.setdefault(idPost,{})
+      posts[idPost][idComment]={}
+      posts[idPost][idComment]["user"]=user
+      posts[idPost][idComment]["time"]=time
+      print "IDComment:"+str(idComment)
+      print "IDPost:"+str(idPost)
+      print "user:"+str(user)
+      print "message:"+str(message)
+      print "time"+str(time)
+      print "likeCount:"+str(likeCount)
+      print "UserlikeCount:"+str(userLike)
+      print fbLink
+      #print "IDComment:"+str(idComment)
+      break
 
 def getDatesPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -382,8 +416,8 @@ def getPostDataFrom():
       #print numPosts
       #print numPosts
    		
-
-getTypeContentPost()
+getCommentsPost()
+#getTypeContentPost()
 #getDatesPost()
 #getNumPhotosVideoShared()
 #getEarliestLatestDate()
