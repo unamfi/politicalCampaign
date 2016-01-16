@@ -268,20 +268,44 @@ def getCommentsOverTime():
    #tipoPostsCount={}
    
    dailyNumComments={}
+   dailyMedianNumComments={}
    dailyNumPosts={}
+   dailyReplyRate={}
    for d,dictDates in sorted_dates:
+
       print str(d)
       dailyNumComments.setdefault(d,0)
       dailyNumPosts.setdefault(d,0)
+      dailyMedianNumComments.setdefault(d,[])
       numPosts=len(dictDates)
       dailyNumPosts[d]+=numPosts
-      
+
       for idPost in dictDates:
          if idPost in comments:
             print "found comments!"
             print len(comments[idPost])
-
+            dailyMedianNumComments[d].append(len(comments[idPost]))
             dailyNumComments[d]+=len(comments[idPost])
+
+   for d in dailyMedianNumComments:
+      print d
+      numCommentsPosts=dailyMedianNumComments[d]
+      numCommentsPosts.sort()
+      for c in numCommentsPosts:
+         print c
+      print d
+
+   #for d in dailyNumPosts:
+   #   print str(d)+","+str(dailyNumPosts[d])+","+str(dailyNumComments[d])
+   #   if dailyNumComments[d]==0:
+   #      rate=0
+   #   else:
+   #      rate=float(float(dailyNumPosts[d])/float(dailyNumComments[d]))
+   #   print rate
+   #   dailyReplyRate[d]=rate
+
+  # for d in dailyReplyRate:
+   #   print str(d)+","+str(dailyReplyRate[d])
 
 
 
@@ -442,68 +466,70 @@ def getDatesPost():
 
 
 def getPostDataFrom():
-	db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+   db = MySQLdb.connect(host="localhost",    # your host, usually localhost
                      user="root",         # your username
                      passwd="nathan",  # your password
                      db="politics")        # name of the data base
 
 
-	# you must create a Cursor object. It will let
-	#  you execute all the queries you need
-	cur = db.cursor()
-	# Use all the SQL you like
-	cur.execute("SELECT * FROM post;")
-	# print all the first cell of all the rows
-	dates={}
-	numPosts=0
-	for row in cur.fetchall():
-		#print row
-		
-		date=row[3]
- 		if not date==None:
- 			
-			print date
-			tipoPost=row[11]
-			texto=row[12]
-			url=row[10]
-   			
-   			if not tipoPost==None:
-				dates.setdefault(date,{})
-				dates[date].setdefault(tipoPost,{})
-				dates[date][tipoPost][url]=texto
-				print tipoPost
-				print texto
-				print url
-				numPosts+=1
-				print
-			
-   	print numPosts
-   	sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
-   	
-   	tipoPostsCount={}
-   	
-   	for d,v in sorted_dates:
-   	
-   		tipoPosts=dates[d]
-   		for t in tipoPosts:
+   # you must create a Cursor object. It will let
+   #  you execute all the queries you need
+   cur = db.cursor()
+   # Use all the SQL you like
+   cur.execute("SELECT * FROM post;")
+   # print all the first cell of all the rows
+   dates={}
+   numPosts=0
+   for row in cur.fetchall():
+      #print row
+      
+      date=row[3]
+      if not date==None:
+         
+         print date
+         tipoPost=row[11]
+         texto=row[12]
+         url=row[10]
+            
+         if not tipoPost==None:
+            dates.setdefault(date,{})
+            dates[date].setdefault(tipoPost,{})
+            dates[date][tipoPost][url]=texto
+            print tipoPost
+            print texto
+            print url
+            numPosts+=1
+            print
+         
+      print numPosts
+      sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
+      
+      tipoPostsCount={}
+      
+      for d,v in sorted_dates:
+      
+         tipoPosts=dates[d]
+         for t in tipoPosts:
 
-   			tipoPostsCount.setdefault(t,0)
-   			tipoPostsCount[t]+=1
-   		
-   	sorted_tipoPostsCount = sorted(tipoPostsCount.items(), key=operator.itemgetter(1),reverse=True)
-   	m=0
-   	for t,v in sorted_tipoPostsCount:
-   		if m<20:
-   			print t+","+str(v)
-   		else:
-   			break
-   		m+=1
+            tipoPostsCount.setdefault(t,0)
+            tipoPostsCount[t]+=1
+         
+      sorted_tipoPostsCount = sorted(tipoPostsCount.items(), key=operator.itemgetter(1),reverse=True)
+      m=0
+      for t,v in sorted_tipoPostsCount:
+         if m<20:
+            print t+","+str(v)
+         else:
+            break
+         m+=1
       #print numPosts
       #print numPosts
+#getPostIDs()
+#getCommentsPost()
 getCommentsOverTime()
 #getPostIDs()
 #getCommentsOverTime()
-#getDatesPost()  		
+#getDatesPost()      
 #getCommentsPost()
 #getTypeContentPost()
 #getDatesPost()
@@ -518,6 +544,6 @@ getCommentsOverTime()
 
 #sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
 #for d,v in sorted_dates:
-#	print d
+#  print d
 
     #break
