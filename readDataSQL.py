@@ -260,6 +260,45 @@ def getEarliestLatestDate():
    print last
       #2012-11-07 22:00:53
 
+def getCommentsOverTime():
+   #dates = pickle.load(open("postsDates.p", "rb"))
+   comments = pickle.load(open("postsComments.p", "rb"))
+   datesPostIds=pickle.load(open("datesPostIds.p", "rb"))
+   sorted_dates = sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=True)
+   #tipoPostsCount={}
+   
+   dailyNumComments={}
+   dailyNumPosts={}
+   for d,dictDates in sorted_dates:
+      print str(d)
+      dailyNumComments.setdefault(d,0)
+      dailyNumPosts.setdefault(d,0)
+      numPosts=len(dictDates)
+      dailyNumPosts[d]+=numPosts
+      
+      for idPost in dictDates:
+         if idPost in comments:
+            print "found comments!"
+            print len(comments[idPost])
+
+            dailyNumComments[d]+=len(comments[idPost])
+
+
+
+         #print idPost
+
+         #keysPost=dictDates[idPost]
+
+         #for k in keysPost:
+         #   print k
+            #tipoPost
+            #url
+            #texto
+      #+","+str(v)
+   #for d in 
+
+   # pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
+
 
 def getCommentsPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -272,7 +311,7 @@ def getCommentsPost():
    print "got comments!"
    posts={}
    for row in cur.fetchall():
-      print row
+      #print row
       idComment=row[0]
       idPost=row[1]
       fbLink=row[2]
@@ -285,16 +324,62 @@ def getCommentsPost():
       posts[idPost][idComment]={}
       posts[idPost][idComment]["user"]=user
       posts[idPost][idComment]["time"]=time
-      print "IDComment:"+str(idComment)
-      print "IDPost:"+str(idPost)
-      print "user:"+str(user)
-      print "message:"+str(message)
-      print "time"+str(time)
-      print "likeCount:"+str(likeCount)
-      print "UserlikeCount:"+str(userLike)
-      print fbLink
+      posts[idPost][idComment]["message"]=message
       #print "IDComment:"+str(idComment)
-      break
+      #print "IDPost:"+str(idPost)
+      #print "user:"+str(user)
+      #print "message:"+str(message)
+      #print "time"+str(time)
+      #print "likeCount:"+str(likeCount)
+      #print "UserlikeCount:"+str(userLike)
+      #print fbLink
+   pickle.dump(posts, open("postsComments.p", "wb"))
+      #print "IDComment:"+str(idComment)
+      #break
+
+
+def getPostIDs():
+   db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+                     user="root",         # your username
+                     passwd="nathan",  # your password
+                     db="politics")        # name of the data base
+   cur = db.cursor()
+   # Use all the SQL you like
+   cur.execute("SELECT * FROM post;")
+   # print all the first cell of all the rows
+   dates={}
+   datesPostIds={}
+   numPosts=0
+
+   for row in cur.fetchall():
+      #print row
+      idPost=row[0]
+      date=row[3]
+      user=row[5]
+      #print idPost
+      if not date==None:
+         tipoPost=row[11]
+         texto=row[12]
+         url=row[10]
+
+         if not tipoPost==None:
+            dates.setdefault(date,{})
+            datesPostIds.setdefault(date,{})
+            datesPostIds[date][idPost]={}
+            datesPostIds[date][idPost]["tipoPost"]=tipoPost
+            datesPostIds[date][idPost]["url"]=url
+            datesPostIds[date][idPost]["texto"]=texto
+
+
+            dates[date].setdefault(tipoPost,{})
+            dates[date][tipoPost][url]=texto
+            #print tipoPost
+            #print texto
+            #print url
+            numPosts+=1
+      #break
+   pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
+   print len(datesPostIds)
 
 def getDatesPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -415,8 +500,11 @@ def getPostDataFrom():
    		m+=1
       #print numPosts
       #print numPosts
-   		
-getCommentsPost()
+getCommentsOverTime()
+#getPostIDs()
+#getCommentsOverTime()
+#getDatesPost()  		
+#getCommentsPost()
 #getTypeContentPost()
 #getDatesPost()
 #getNumPhotosVideoShared()
