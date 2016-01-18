@@ -260,6 +260,173 @@ def getEarliestLatestDate():
    print last
       #2012-11-07 22:00:53
 
+def checkDatesPosts():
+   datesPostIds=pickle.load(open("datesPostIds.p", "rb"))
+   FILE=open("trash.txt",'w')
+   for d in datesPostIds:
+      print d
+      FILE.write(str(d)+"\n")
+   FILE.close()
+
+def testPosts():
+   posts=pickle.load(open("postsDates.p", "rb"))
+   for pID in posts:
+      print pID
+      print posts[pID]
+def getRepliesComments():
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+
+   #posts[idPost][idComment]={}
+   #posts[idPost][idComment]["user"]=user
+   #posts[idPost][idComment]["time"]=time
+   #posts[idPost][idComment]["message"]=message
+   usersComments={}
+   postUserC={}
+   for idPost in postsWithComments:
+      comments=postsWithComments[idPost]
+      #postUserC[]
+      for idComment in comments:
+         #print comments[idComment]["user"]
+         username=comments[idComment]["user"]
+         usersComments.setdefault(username,0)
+         usersComments[username]+=1
+         postUserC.setdefault(username,{})
+         postUserC[username].setdefault(idPost,0)
+         postUserC[username][idPost]+=1
+
+   arrayUserComments={}
+   for u in postUserC:
+      #print u
+      arrayUserComments.setdefault(u,[])
+      for idPost in postUserC[u]:
+         valor= postUserC[u][idPost]
+         arrayUserComments[u].append(valor)
+
+   for u in arrayUserComments:
+      if str(u)=="2534":
+         print u
+         arrayU=arrayUserComments[u]
+         arrayU.sort()
+         median=len(arrayU)/2
+         median=arrayU[median]
+         print "Median:"+str(median)
+         for c in arrayU:
+            print c
+
+      #
+      #2534,1222,1.24948875256
+
+      #257,527,0.538854805726
+
+      #7541,467,0.477505112474
+
+      #4498,446,0.456032719836
+
+      #37775,409,0.418200408998
+      #for v in arrayU:
+      #   print u
+
+
+
+         #break
+         #print idComment
+      #print c
+      #print c["user"]
+      #print 
+      #break
+   #sorted_usersComments = sorted(usersComments.items(), key=operator.itemgetter(1),reverse=True)
+   #i=0
+   #for u,v in sorted_usersComments:
+    #  if i<5:
+         
+     #    average=float(float(v)/float(len(postsWithComments)))
+      #   print str(u)+","+str(v)+","+str(average)
+       #  print
+      #else:
+      #   break
+      #i+=1
+   #print "Num Posts:"+str(len(postsWithComments))
+
+def getCommentsOverTimeArrays():
+   postsTexts=pickle.load(open("postsDates.p", "rb"))
+   comments = pickle.load(open("postsComments.p", "rb"))
+   datesPostIds=pickle.load(open("datesPostIds.p", "rb"))
+   sorted_dates = sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=True)
+   daysOrdered=[]
+   dailyNumComments={}
+   dailyNumPosts={}
+   topComments={}
+   for d,dictDates in sorted_dates:
+      day=str(d).split()[0]
+      daysOrdered.append(day)
+      #datesDict.setdefault(day,[])
+      #datesDict[day].append(d)
+      #print str(d)
+      dailyNumComments.setdefault(day,[])
+      dailyNumPosts.setdefault(day,0)
+      
+      numPosts=len(dictDates)
+      dailyNumPosts[day]+=numPosts
+      for idPost in dictDates:
+         if idPost in comments:
+            print "found comments!"
+            print len(comments[idPost])
+            #dailyMedianNumComments[day].append(len(comments[idPost]))
+            dailyNumComments[day].append(len(comments[idPost]))
+            numComments=len(comments[idPost])
+            topComments.setdefault(numComments,{})
+            topComments[numComments].setdefault(d,{})
+            topComments[numComments][d][idPost]=day
+   x=[]
+   y=[]
+   z=[]
+   zCounter=0
+   #dailyMedianNumComments.sort()
+
+   for d in daysOrdered:
+      print d
+      numCommentsPosts=dailyNumComments[d]
+      numCommentsPosts.sort()
+      print "Length Posts:"+str(dailyNumPosts[d])
+      #median=len(numCommentsPosts)/2
+      #median=numCommentsPosts[median]
+      #for c in numCommentsPosts:
+      #   print c
+      #print "Median:"+str(median)
+      for  c in numCommentsPosts:
+         x.append(d)
+         y.append(c)
+         z.append(zCounter)
+         zCounter+=1
+   FILE=open("commentsBronco.csv","w")
+   FILE.write("date,comment\n")
+   for zCounter in z:
+      print zCounter
+      print str(x[zCounter])+","+str(y[zCounter])
+      FILE.write(str(x[zCounter])+","+str(y[zCounter])+"\n")
+   FILE.close()
+   sorted_topComments = sorted(topComments.items(), key=operator.itemgetter(0),reverse=True)
+   i=0
+   for numComments, dictComments in sorted_topComments:
+      if i<10:
+         print numComments
+         #topComments[numComments][d][idPost]=day
+         for postID in dictComments:
+            print str(postID)+","+str(dictComments[postID])
+            text=postsTexts[postID]
+            print "Texto:"+str(text)
+         print
+         print
+
+      else:
+         break
+      i+=1
+   #6702
+   #2015-07-29 19:22:27,{781L: '2015-07-29'}
+   #topComments[numComments][idPost]=day
+
+
+
 def getCommentsOverTime():
    #dates = pickle.load(open("postsDates.p", "rb"))
    comments = pickle.load(open("postsComments.p", "rb"))
@@ -271,29 +438,56 @@ def getCommentsOverTime():
    dailyMedianNumComments={}
    dailyNumPosts={}
    dailyReplyRate={}
+   datesDict={}
+   daysOrdered=[]
    for d,dictDates in sorted_dates:
-
+      
+      day=str(d).split()[0]
+      daysOrdered.append(day)
+      datesDict.setdefault(day,[])
+      datesDict[day].append(d)
       print str(d)
-      dailyNumComments.setdefault(d,0)
-      dailyNumPosts.setdefault(d,0)
-      dailyMedianNumComments.setdefault(d,[])
+      dailyNumComments.setdefault(day,0)
+      dailyNumPosts.setdefault(day,0)
+      dailyMedianNumComments.setdefault(day,[])
       numPosts=len(dictDates)
-      dailyNumPosts[d]+=numPosts
+      dailyNumPosts[day]+=numPosts
 
       for idPost in dictDates:
          if idPost in comments:
             print "found comments!"
             print len(comments[idPost])
-            dailyMedianNumComments[d].append(len(comments[idPost]))
-            dailyNumComments[d]+=len(comments[idPost])
+            dailyMedianNumComments[day].append(len(comments[idPost]))
+            dailyNumComments[day]+=len(comments[idPost])
 
-   for d in dailyMedianNumComments:
+   x=[]
+   y=[]
+   z=[]
+   zCounter=0
+   #dailyMedianNumComments.sort()
+   for d in daysOrdered:
       print d
       numCommentsPosts=dailyMedianNumComments[d]
       numCommentsPosts.sort()
+      print "Length Posts:"+str(dailyNumPosts[d])
+      median=len(numCommentsPosts)/2
+      median=numCommentsPosts[median]
       for c in numCommentsPosts:
          print c
-      print d
+      print "Median:"+str(median)
+      
+      x.append(d)
+      y.append(median)
+      z.append(zCounter)
+      zCounter+=1
+   FILE=open("commentsBronco.csv","w")
+   FILE.write("date,comment\n")
+   for zCounter in z:
+      print zCounter
+      print str(x[zCounter])+","+str(y[zCounter])
+      FILE.write(str(x[zCounter])+","+str(y[zCounter])+"\n")
+   FILE.close()
+
 
    #for d in dailyNumPosts:
    #   print str(d)+","+str(dailyNumPosts[d])+","+str(dailyNumComments[d])
@@ -524,9 +718,14 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
+
+getRepliesComments()
+#testPosts()
+#getCommentsOverTimeArrays()
+#checkDatesPosts()
 #getPostIDs()
 #getCommentsPost()
-getCommentsOverTime()
+#getCommentsOverTime()
 #getPostIDs()
 #getCommentsOverTime()
 #getDatesPost()      
