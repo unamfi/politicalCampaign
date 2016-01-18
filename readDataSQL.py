@@ -312,6 +312,7 @@ def getRepliesComments():
          print "Median:"+str(median)
          for c in arrayU:
             print c
+            print c
 
       #
       #2534,1222,1.24948875256
