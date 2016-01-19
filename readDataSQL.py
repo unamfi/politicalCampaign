@@ -273,7 +273,100 @@ def testPosts():
    for pID in posts:
       print pID
       print posts[pID]
+
+def participationRatePerYear():
+
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
+   sorted_dates = sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=True)
+   participationRate={}
+   daysOrdered=[]
+   dailyNumComments={}
+   dailyNumPosts={}
+   for date,postsDay in sorted_dates:
+      print date
+      day=str(date).split()[0]
+      daysOrdered.append(day)
+      
+      dailyNumComments.setdefault(day,0)
+      dailyNumPosts.setdefault(day,0)
+      
+      numPosts=len(postsDay)
+      dailyNumPosts[day]+=numPosts
+
+      for idPost in postsDay:
+         if idPost in postsWithComments:
+            print "found comments!"
+            numComments=len(postsWithComments[idPost])
+            dailyNumComments[day]+=numComments
+
+   FILE=open("commentsBronco.csv","w")
+   FILE.write("day,pRate\n")
+   for d in daysOrdered:
+      print d
+      participationRate=float(float(dailyNumComments[d])/float(dailyNumPosts[d]))
+      print str(d)+","+str(participationRate)
+      FILE.write(str(d)+","+str(participationRate)+"\n")
+   FILE.close()
+
+   #print "all we are saying :)"
+   #posts.setdefault(idPost,{})
+   #posts[idPost][idComment]={}
+   #posts[idPost][idComment]["user"]=user
+   #posts[idPost][idComment]["time"]=time
+   #posts[idPost][idComment]["message"]=message
+
+   #datesPostIds[date][idPost]={}
+   #datesPostIds[date][idPost]["tipoPost"]=tipoPost
+   #datesPostIds[date][idPost]["url"]=url
+   #EdatesPostIds[date][idPost]["texto"]=texto
+
+
+def getDatesPostsFinal():
+   #pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   #datesPostIds = pickle.load(open("postsDates.p", "rb"))
+   datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
+   #pickle.dump(datesPostIDs,open("datesPostIDs.p", "wb"))
+   for date in datesPostIds:
+      dateString=str(date)
+      if "2012" in dateString:
+         posts2012=datesPostIds[date]
+         for pID in posts2012:
+            print pID
+            if pID in postsWithComments:
+               print pID 
+            #print pID
+            #   print "found!"+dateString
+         break
+
+      #print str(date)
+   #datesPostIds[date][idPost]={}
+   #datesPostIds[date][idPost]["tipoPost"]=tipoPost
+   #datesPostIds[date][idPost]["url"]=url
+   #EdatesPostIds[date][idPost]["texto"]=texto
+
 def getRepliesComments():
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   for idPost in postsWithComments:
+      comments=postsWithComments[idPost]
+      fechas={}
+      for idComment in comments:
+         date=comments[idComment]["time"]
+         fechas[date]=0
+   sorted_fechas = sorted(fechas.items(), key=operator.itemgetter(0),reverse=False)
+   for d,v in sorted_fechas:
+      print d
+      #dateString=str(d)
+      #if "2014" in dateString:
+      #   print "found!"+dateString
+      #   break
+      #break
+
+
+
+
+def getRepliesComments2():
    postsWithComments = pickle.load(open("postsComments.p", "rb"))
 
    #posts[idPost][idComment]={}
@@ -610,10 +703,11 @@ def getDatesPost():
    cur.execute("SELECT * FROM post;")
    # print all the first cell of all the rows
    dates={}
+   datesPostIDs={}
    numPosts=0
    for row in cur.fetchall():
       #print row
-      
+      idPost=row[0]
       date=row[3]
 
       if not date==None:
@@ -627,6 +721,12 @@ def getDatesPost():
             dates.setdefault(date,{})
             dates[date].setdefault(tipoPost,{})
             dates[date][tipoPost][url]=texto
+
+            datesPostIDs.setdefault(date,{})
+            datesPostIDs[date].setdefault(idPost,{})
+            datesPostIDs[date][idPost]=texto
+
+
             #print tipoPost
             #print texto
             #print url
@@ -635,7 +735,8 @@ def getDatesPost():
          
    print numPosts
    pickle.dump(dates, open("postsDates.p", "wb"))
-   #pickle.dump(dates,"postsDates.p")
+   pickle.dump(datesPostIDs,open("datesPostIDs.p", "wb"))
+
    sorted_dates = sorted(dates.items(), key=operator.itemgetter(0),reverse=True)
    tipoPostsCount={}
       
@@ -720,7 +821,17 @@ def getPostDataFrom():
       #print numPosts
       #print numPosts
 
+
 getRepliesComments()
+
+#participationRatePerYear()
+#getCommentsPost()
+#getRepliesComments()
+
+#getDatesPost()
+#getDatesPost()
+#getDatesPostsFinal()
+
 #testPosts()
 #getCommentsOverTimeArrays()
 #checkDatesPosts()
