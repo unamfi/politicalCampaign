@@ -347,16 +347,81 @@ def getDatesPostsFinal():
    #EdatesPostIds[date][idPost]["texto"]=texto
 
 def getRepliesComments():
+
    postsWithComments = pickle.load(open("postsComments.p", "rb"))
-   for idPost in postsWithComments:
-      comments=postsWithComments[idPost]
-      fechas={}
-      for idComment in comments:
-         date=comments[idComment]["time"]
-         fechas[date]=0
-   sorted_fechas = sorted(fechas.items(), key=operator.itemgetter(0),reverse=False)
-   for d,v in sorted_fechas:
-      print d
+   datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
+   yearUserComments={}
+   yearUserPosts={}
+   for date in datesPostIds:
+      #2013-08-12 19:11:50
+      dateString=str(date).split()[0]
+      year=dateString.split("-")[0]
+      postsIDs=datesPostIds[date]
+      for pID in postsIDs:
+         if pID in postsWithComments:
+            comments=postsWithComments[pID]
+            for cID in comments:
+               usuario=comments[cID]["user"]
+               print usuario
+               yearUserPosts.setdefault(year,{})
+               yearUserPosts[year].setdefault(usuario,{})
+               yearUserPosts[year][usuario].setdefault(pID,0)
+               yearUserPosts[year][usuario][pID]+=1
+
+               yearUserComments.setdefault(year,{})
+               yearUserComments[year].setdefault(usuario,0)
+               yearUserComments[year][usuario]+=1
+
+   for year in yearUserComments:
+      print year
+      usuarios=yearUserComments[year]
+      #print len(usuarios)
+      sorted_usuarios = sorted(usuarios.items(), key=operator.itemgetter(1),reverse=True)
+      i=0
+      print "Top Commenters:"+str(year)
+      for u,v in sorted_usuarios:
+         if i<10:
+            print str(u)+","+str(usuarios[u])
+         else:
+            break
+         i+=1
+      #print len(sorted_usuarios)
+      print
+
+      #sorted_usuarios = sorted(usuarios.items(), key=operator.itemgetter(1),reverse=True)
+
+      #for u,v in sorted_usuarios:
+      #   str(u)+","+str(v)
+
+
+      #if "2013" in dateString:
+      #   postsIDs=datesPostIds[date]
+      #   for pID in postsIDs:
+      #      if pID in postsWithComments:
+      #         print "Found in 2013:"+str(pID)
+      #         print year
+      #dateString=str(date)
+      #if "2013" in dateString:
+      #   print date
+
+      #posts.setdefault(idPost,{})
+      #posts[idPost][idComment]={}
+      #posts[idPost][idComment]["user"]=user
+      #posts[idPost][idComment]["time"]=time
+      #posts[idPost][idComment]["message"]=message
+
+
+
+   #postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   #for idPost in postsWithComments:
+   #   comments=postsWithComments[idPost]
+   #   fechas={}
+   #   for idComment in comments:
+   #      date=comments[idComment]["time"]
+   #      fechas[date]=0
+   #sorted_fechas = sorted(fechas.items(), key=operator.itemgetter(0),reverse=True)
+   #for d,v in sorted_fechas:
+   #   print d
       #dateString=str(d)
       #if "2014" in dateString:
       #   print "found!"+dateString
