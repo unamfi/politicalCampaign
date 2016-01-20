@@ -611,6 +611,33 @@ def getCommentsOverTime():
 
    # pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
 
+def getUsers():
+   db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+                     user="root",         # your username
+                     passwd="nathan",  # your password
+                     db="politics")        # name of the data base
+   cur = db.cursor()
+   # Use all the SQL you like
+   cur.execute("SELECT * FROM user;")
+   print "got user!"
+   userIDs={}
+   userFBIds={}
+   for row in cur.fetchall():
+      #print row
+      idUser=row[0]
+      fbUserID=row[1]
+      name=row[2]
+      #print name
+      userIDs[idUser]=name
+      userFBIds[fbUserID]=name
+      #(1L, '259659740767219', 'Jaime Rodriguez Calderon', None, None, None, None)
+      #Jaime Rodriguez Calderon
+
+
+      #break
+   pickle.dump(userIDs, open("userIDs.p", "wb"))
+   pickle.dump(userFBIds, open("userFBIds.p", "wb"))
+   print "DOne!"
 
 def getCommentsPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -821,8 +848,8 @@ def getPostDataFrom():
       #print numPosts
       #print numPosts
 
-
-getRepliesComments()
+getUsers()
+#getRepliesComments()
 
 #participationRatePerYear()
 #getCommentsPost()
