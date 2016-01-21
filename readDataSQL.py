@@ -3,6 +3,29 @@ import MySQLdb
 import operator
 import pickle
 import datetime
+import csv
+
+def correctCSVComments():
+   exampleFile = open('commentsBroncoEdited.csv')
+   exampleReader = csv.reader(exampleFile)
+   datesRates={}
+
+   for row in exampleReader:
+      if exampleReader.line_num>1:
+         print exampleReader.line_num
+         print row
+         date=row[0]
+         rate=row[1]
+         datesRates[date]=rate
+   sorted_dates = sorted(datesRates.items(), key=operator.itemgetter(0),reverse=False)
+   FILE=open("commentsBroncoFinal.csv",'w')
+   for d,r in sorted_dates:
+      print str(d)+","+str(r)
+      FILE.write(str(d)+","+str(r)+"\n")
+   FILE.close()
+
+         #break
+      #print('Row #' + str(exampleReader.line_num) + ' ' + str(row))
 
 def getNumPhotosVideoShared():
    urlsFinal={}
@@ -1095,8 +1118,8 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
-
-understandTopCommenters()
+correctCSVComments()
+#understandTopCommenters()
 #participationRatePerYear()
 
 #getUsers()
