@@ -308,6 +308,8 @@ def participationRatePerYear():
       print str(d)+","+str(participationRate)
       FILE.write(str(d)+","+str(participationRate)+"\n")
    FILE.close()
+   pickle.dump(dailyNumComments,open("dailyNumComments.p", "wb"))
+   pickle.dump(dailyNumPosts,open("dailyNumPosts.p", "wb"))
 
    #print "all we are saying :)"
    #posts.setdefault(idPost,{})
@@ -346,6 +348,187 @@ def getDatesPostsFinal():
    #datesPostIds[date][idPost]["url"]=url
    #EdatesPostIds[date][idPost]["texto"]=texto
 
+def getCommentsPerYear():
+   yearUserComments = pickle.load(open("yearUserComments.p", "rb"))
+   commentsYear={}
+   for year in yearUserComments:
+      print year
+      usuarios=yearUserComments[year]
+      for u in usuarios:
+         numComments=usuarios[u]
+         print "Num Comen:"+str(numComments)+","+str(year)
+         commentsYear.setdefault(year,0)
+         commentsYear[year]+=numComments
+   pickle.dump(commentsYear, open("commentsYear.p", "wb"))
+
+def getPercentageBronco(usuariosYear,userID,year):
+   userIDs = pickle.load(open("userIDs.p", "rb"))
+   commentsYear = pickle.load(open("commentsYear.p", "rb"))
+   numCommentsYear=commentsYear[year]
+   if userID in usuariosYear:
+      numCommentsUserYear=usuariosYear[userID]
+      numCommentsUserYear=numCommentsUserYear*100
+      numCommentsUserYear=float(float(numCommentsUserYear)/float(numCommentsYear))
+      print numCommentsUserYear
+      return numCommentsUserYear
+   else:
+      return 0
+
+
+
+def participationRateIndividual():
+   yearComments = pickle.load(open("yearComments.p", "rb"))
+   yearPosts = pickle.load(open("yearPosts.p", "rb"))
+   yearUserComments = pickle.load(open("yearUserComments.p", "rb"))
+   keyBronco=1L
+   FILE=open("participationRateBronco.csv",'w')
+   print
+   print "START"
+   for year in yearPosts:
+      #print year
+      comentariosUsuariosYear=yearUserComments[year]
+      if keyBronco in comentariosUsuariosYear:
+         comentariosIndividualesYear=comentariosUsuariosYear[keyBronco]
+         rate=float(float(comentariosIndividualesYear)/float(yearPosts[year]))
+         
+      else:
+         comentariosIndividualesYear=0
+         rate=0
+
+      #print comentariosIndividualesYear
+      FILE.write(str(year)+","+str(rate)+"\n")
+      print str(year)+","+str(rate)
+   FILE.close()
+
+
+
+   #numCommentsUserYear=usuariosYear[userID]
+
+def getYearComments_Posts():
+   dailyNumComments = pickle.load(open("dailyNumComments.p", "rb"))
+   dailyNumPosts = pickle.load(open("dailyNumPosts.p", "rb"))
+   yearComments={}
+   yearPosts={}
+   for date in dailyNumComments:
+      print date
+      year=date.split("-")[0]
+      print year
+      print (dailyNumComments[date])
+      yearComments.setdefault(year,0)
+      yearComments[year]+=dailyNumComments[date]
+
+   for date in dailyNumPosts:
+      print date
+      year=date.split("-")[0]
+      print year
+      print (dailyNumPosts[date])
+      yearPosts.setdefault(year,0)
+      yearPosts[year]+=dailyNumPosts[date]
+      #2013-08-25
+
+   pickle.dump(yearComments,open("yearComments.p", "wb"))
+   pickle.dump(yearPosts,open("yearPosts.p", "wb"))
+
+
+#def understandTopCommenters():
+
+def understandTopCommenters():
+   topUsers={}
+   topUsersFinal={}
+   yearUserComments = pickle.load(open("yearUserComments.p", "rb"))
+   yearPosts = pickle.load(open("yearPosts.p", "rb"))
+   #pickle.dump(yearPosts,open("yearPosts.p", "wb"))
+
+   for year in yearUserComments:
+      usuarios=yearUserComments[year]
+      for u in usuarios:
+         #print str(u)+","+str(usuarios[u])
+         topUsers.setdefault(u,0)
+         topUsers[u]+=usuarios[u]
+   sorted_topUsers = sorted(topUsers.items(), key=operator.itemgetter(1),reverse=True)
+   i=0
+   print "TOP"
+   for u,v in sorted_topUsers:
+      if i<5:
+         print str(u)+","+str(v)
+         topUsersFinal.setdefault(u,v)
+      else:
+         break
+      i+=1
+   print 
+   for u in topUsersFinal:
+      v=topUsersFinal[u]
+      print str(u)+","+str(v)
+      FILE=open("participationRate_"+str(u)+".csv",'w')
+      for y in yearUserComments:
+         postsAno=yearPosts[y]
+         v=float(float(v)/float(postsAno))
+         FILE.write(str(y)+","+str(v)+"\n")
+         print y
+         print postsAno
+         print
+
+
+
+def understandTopCommenters2():
+   #pickle.dump(yearUserComments, open("yearUserComments.p", "wb"))
+   #(1L, '259659740767219', 'Jaime Rodriguez Calderon', None, None, None, None)
+   #pickle.dump(userIDs, open("userIDs.p", "wb"))
+   #pickle.dump(userFBIDs, open("userFBIDs.p", "wb"))
+   yearUserComments = pickle.load(open("yearUserComments.p", "rb"))
+   userIDs = pickle.load(open("userIDs.p", "rb"))
+   userFBIDs = pickle.load(open("userFBIDs.p", "rb"))
+   commentsYear = pickle.load(open("commentsYear.p", "rb"))
+   #IDsTopCommentersYear={}
+
+
+
+   yearCommentsPersona={}
+   yearCommentsIndividuo={}
+   #pickle.dump(commentsYear, open("commentsYear[.p", "wb"))
+   for year in yearUserComments:
+      print year
+      usuarios=yearUserComments[year]
+      userID=1L
+      numCommentsUserYear=getPercentageBronco(usuarios,userID,year)
+      yearCommentsPersona[year]=numCommentsUserYear
+
+      #yearCommentsIndividuo
+   sorted_yearCommentsPersona = sorted(yearCommentsPersona.items(), key=operator.itemgetter(0),reverse=True)
+   FILE=open("PorcentajeBroncoContestacion.csv",'w')
+   for y,v in sorted_yearCommentsPersona:
+      print str(y)+","+str(v)
+      FILE.write(str(y)+","+str(v)+"\n")
+   FILE.close()
+   participationRateIndividual()
+
+
+   #getYearComments_Posts()
+      #print len(usuarios)
+      #sorted_usuarios = sorted(usuarios.items(), key=operator.itemgetter(1),reverse=True)
+      #i=0
+      #print "Top Commenters:"+str(year)
+      #for u,v in sorted_usuarios:
+      #   if i<10:
+            
+      #      if u in userIDs:
+      #         print "FOUND!"+str(userIDs[u])+","+str(v)
+      #   else:
+      #      break
+      #   i+=1
+      #keyBronco=1L
+      #if keyBronco in usuarios:
+      #   print "Respuestas Bronco:"+str(usuarios[1L])
+      #else:
+      #   print "Respuestas Bronco:0"
+
+   #getCommentsPerYear()
+
+
+   #print userIDs[1L]
+   #(1L, '259659740767219', 'Jaime Rodriguez Calderon', None, None, None, None)
+   #for u in userIDs:
+   #   print "ERES:"+str(u)
 def getRepliesComments():
 
    postsWithComments = pickle.load(open("postsComments.p", "rb"))
@@ -387,6 +570,7 @@ def getRepliesComments():
          i+=1
       #print len(sorted_usuarios)
       print
+   pickle.dump(yearUserComments, open("yearUserComments.p", "wb"))
 
       #sorted_usuarios = sorted(usuarios.items(), key=operator.itemgetter(1),reverse=True)
 
@@ -677,6 +861,32 @@ def getCommentsOverTime():
    # pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
 
 
+def getUsers():
+   #(1L, '259659740767219', 'Jaime Rodriguez Calderon', None, None, None, None)
+   userIDs={}
+   userFBIDs={}
+   db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+                     user="root",         # your username
+                     passwd="nathan",  # your password
+                     db="politics")        # name of the data base
+   cur = db.cursor()
+   # Use all the SQL you like
+   cur.execute("SELECT * FROM user;")
+   print "got users!"
+   posts={}
+   for row in cur.fetchall():
+      #(1L, '259659740767219', 'Jaime Rodriguez Calderon', None, None, None, None)
+      userID=row[0]
+      FBUserID=row[1]
+      name=row[2]
+      #print row
+      userIDs[userID]=name
+      userFBIDs[FBUserID]=name
+      #break
+   pickle.dump(userIDs, open("userIDs.p", "wb"))
+   pickle.dump(userFBIDs, open("userFBIDs.p", "wb"))
+
+
 def getCommentsPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
                      user="root",         # your username
@@ -886,8 +1096,11 @@ def getPostDataFrom():
       #print numPosts
       #print numPosts
 
+understandTopCommenters()
+#participationRatePerYear()
 
-getRepliesComments()
+#getUsers()
+#getRepliesComments()
 
 #participationRatePerYear()
 #getCommentsPost()
