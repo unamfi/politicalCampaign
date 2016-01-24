@@ -567,6 +567,7 @@ def getHistogramRepliesBronco():
    histogramComments=buildHistogramCommentsBronco(numCommentsBroncoPost)
    sorted_histogramComments = sorted(histogramComments.items(), key=operator.itemgetter(0),reverse=True)
    FILE=open("histogramBroncoComments.csv",'w')
+   FILE.write("histogram,value\n")
    for h,v in sorted_histogramComments:
       print str(h)+","+str(v)
       FILE.write(str(h)+","+str(v)+"\n")
