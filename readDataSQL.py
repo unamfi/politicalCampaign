@@ -194,9 +194,9 @@ def testComments():
             x+=1
             
    FILE=open("postsComments.csv",'w')
-   FILE.write("posts,comments\n")
+   FILE.write("dates,comments\n")
    for x in X:
-      FILE.write(str(X[x])+","+str(Y[x])+"\n")
+      FILE.write(str(dates[x])+","+str(Y[x])+"\n")
       print str(X[x])+","+str(Y[x])
    FILE.close()
 
@@ -1203,7 +1203,8 @@ def getPostDataFrom():
       #print numPosts
       #print numPosts
 
-getHistogramRepliesBronco()
+testComments()
+#getHistogramRepliesBronco()
 #testComments()
 #correctCSVComments()
 #understandTopCommenters()
