@@ -174,7 +174,8 @@ def isMedia(tipo):
 def testComments():
    datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
    postsWithComments = pickle.load(open("postsComments.p", "rb"))
-   sorted_dates = sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=True)
+   sorted_dates = sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=False)
+   dates=[]
    X=[]
    x=0
 
@@ -189,7 +190,9 @@ def testComments():
             numComments=len(postsWithComments[p])
             X.append(x)
             Y.append(numComments)
+            dates.append(str(d))
             x+=1
+            
    FILE=open("postsComments.csv",'w')
    FILE.write("posts,comments\n")
    for x in X:
