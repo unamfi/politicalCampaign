@@ -534,6 +534,47 @@ def understandTopCommenters():
          print
 
 
+def buildHistogramCommentsBronco(numCommentsBroncoPost):
+   histogramComments={}
+   for post in numCommentsBroncoPost:
+      numComments=numCommentsBroncoPost[post]
+      histogramComments.setdefault(numComments,0)
+      histogramComments[numComments]+=1
+   return histogramComments
+
+def getHistogramRepliesBronco():
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
+   userIDs = pickle.load(open("userIDs.p", "rb"))
+   idBronco=1L
+   numCommentsBroncoPost={}
+
+   for date in datesPostIds:
+      print date
+      #print date
+      posts=datesPostIds[date]
+      for p in posts:
+         if p in postsWithComments:
+            comments=postsWithComments[p]
+            for cID in comments:
+               #print cID
+               user=comments[cID]
+               userID=user["user"]
+               if idBronco==userID:
+                  #print idBronco
+                  numCommentsBroncoPost.setdefault(p,0)
+                  numCommentsBroncoPost[p]+=1
+   histogramComments=buildHistogramCommentsBronco(numCommentsBroncoPost)
+   sorted_histogramComments = sorted(histogramComments.items(), key=operator.itemgetter(0),reverse=True)
+   FILE=open("histogramBroncoComments.csv",'w')
+   for h,v in sorted_histogramComments:
+      print str(h)+","+str(v)
+      FILE.write(str(h)+","+str(v)+"\n")
+   FILE.close()
+
+              
+
+
 
 def understandTopCommenters2():
    #pickle.dump(yearUserComments, open("yearUserComments.p", "wb"))
@@ -1160,7 +1201,9 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
-testComments()
+
+getHistogramRepliesBronco()
+#testComments()
 #correctCSVComments()
 #understandTopCommenters()
 #participationRatePerYear()
