@@ -171,6 +171,45 @@ def isMedia(tipo):
 
           #  if keyword in tLower:
 
+def testComments():
+   datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   sorted_dates = sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=True)
+   X=[]
+   x=0
+
+   Y=[]
+   for d,posts in sorted_dates:
+      print d
+      posts=datesPostIds[d]
+      for p in posts:
+         if p in postsWithComments:
+            print "Found Post!"
+            print len(postsWithComments[p])
+            numComments=len(postsWithComments[p])
+            X.append(x)
+            Y.append(numComments)
+            x+=1
+   FILE=open("postsComments.csv",'w')
+   FILE.write("posts,comments\n")
+   for x in X:
+      FILE.write(str(X[x])+","+str(Y[x])+"\n")
+      print str(X[x])+","+str(Y[x])
+   FILE.close()
+
+
+      #   year=d.year
+         
+      #   if "2013" in str(year):
+            
+      #      if p in postsWithComments:
+      #         print "Found Post!"
+      #         print len(postsWithComments[p])
+
+   #for p in postsWithComments:
+      #print p
+   #   if p in datesPostIds:
+   #      print str(p)+","+str(datesPostIds[p])
 
 def getTypeContentPost():
    dates = pickle.load(open("postsDates.p", "rb"))
@@ -1118,7 +1157,8 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
-correctCSVComments()
+testComments()
+#correctCSVComments()
 #understandTopCommenters()
 #participationRatePerYear()
 
