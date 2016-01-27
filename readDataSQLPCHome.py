@@ -542,6 +542,31 @@ def buildHistogramCommentsBronco(numCommentsBroncoPost):
       histogramComments[numComments]+=1
    return histogramComments
 
+def getPostsWithBroncoCommentsAll():
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   postCommentedByBronco={}
+   for p in postsWithComments:
+      comentarios=postsWithComments[p]
+      for c in comentarios:
+         #print c
+         user=comentarios[c]
+         userID=comentarios[c]["user"]
+         #print userID
+         if userID==1L:
+            #print "found bronco!"
+            postCommentedByBronco.setdefault(p,0)
+            postCommentedByBronco[p]+=1
+   sorted_postCommentedByBronco = sorted(postCommentedByBronco.items(), key=operator.itemgetter(0),reverse=False)
+   FILE=open("postsCommentsBroncoTotal.csv",'w')
+   FILE.write("post,comment\n")
+   for c,v in sorted_postCommentedByBronco:
+      print str(c)+","+str(v)
+      FILE.write(str(c)+","+str(v)+"\n")
+   FILE.close()
+   pickle.dump(postCommentedByBronco, open("postCommentedByBronco.p", "wb"))
+   #postCommentedByBronco
+def getPostsWithNoRepliesBronco():
+   postCommentedByBronco = pickle.load(open("postCommentedByBronco.p", "rb"))
 
 def getPostsWithBroncoComments():
    #pickle.dump(topPostsBroncoC, open("topPostsBroncoC.p", "wb"))
@@ -568,9 +593,23 @@ def infoToPosts():
    #print "baby"
    FILE=open("textoTopPostsBroncoCommented.txt",'w')
    
+   topPostsBroncoC = sorted(topPostsBroncoC.items(), key=operator.itemgetter(1),reverse=True)
+   for pID,numC in topPostsBroncoC:
+      
+      
+      print len(textoTopPosts)
+      if pID in textoTopPosts:
+         print "POST:"+str(pID)+","+str(numC)
+         
 
-   for pID in textoTopPosts:
-      FILE.write(str(textoTopPosts[pID])+"\n")
+         texto=textoTopPosts[pID]
+         if not texto==None:
+            FILE.write("Num Comments Bronco:"+str(numC)+"\n")
+            FILE.write(texto+"\n\n")
+
+   #for pID in textoTopPosts:
+    #  FILE.write("Post:"+str(topPostsBroncoC[pID])+"\n")
+    #  FILE.write("Num:"+str(textoTopPosts[pID])+"\n\n")
       #numC=topPostsBroncoC[pID]
       #print str(textoTopPosts[pID])
       #print numC
@@ -1278,8 +1317,10 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
-getTopPostsBroncoCommented()
-infoToPosts()
+#getTopPostsBroncoCommented()
+#infoToPosts()
+
+getPostsWithBroncoCommentsAll()
 #getTopPostsBroncoCommented()
 #testComments()
 #getHistogramRepliesBronco()
