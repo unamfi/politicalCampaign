@@ -570,7 +570,7 @@ def getpostDates():
    postDate={}
    datesPostIDs = pickle.load(open("datesPostIDs.p", "rb"))
    for date in datesPostIDs:
-      #@print date
+      
       posts=datesPostIDs[date]
       for p in posts:
          postDate[p]=date
@@ -579,25 +579,31 @@ def getpostDates():
    return postDate
 
 def getPostsNoRepliesBronco():
+   datesPostIDs = pickle.load(open("datesPostIDs.p", "rb"))
    postDate=getpostDates()
    postCommentedByBronco = pickle.load(open("postCommentedByBronco.p", "rb"))
    postsAllB={}
 
    for pID in postDate:
-      #print pID
+      
       if pID in postCommentedByBronco:
-         #print pID
-         #print postCommentedByBronco[pID]
-         #print 
+         
          postsAllB[pID]=postCommentedByBronco[pID]
       else:
          postsAllB[pID]=0
 
    sorted_postDate = sorted(postDate.items(), key=operator.itemgetter(1),reverse=False)
-   FILE=open("broncpCommentsPost.csv",'w')
+   FILE=open("broncpCommentsPost.txt",'w')
+   i=0
    for pID,date in sorted_postDate:
+      posts=datesPostIDs[date]
+      for pID in posts:
+         texto=posts[pID]
       print str(date)+","+str(postsAllB[pID])
-      FILE.write(str(date)+","+str(postsAllB[pID])+"\n")
+      FILE.write(str(i)+"\n")
+      FILE.write(str(date)+","+str(postsAllB[pID])+",\n"+str(texto)+"\n\n")
+      #str(postsAllB[pID])
+      i+=1
    FILE.close()
    #for pID,v in sorted_postsAllB:
    #   print str(pID)+","+str(v)
