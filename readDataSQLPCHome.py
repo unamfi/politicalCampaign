@@ -594,10 +594,12 @@ def getBiggestNumComment():
    #print biggestComment
    return biggestComment
 def getScaleComments(numComments,biggestComment):
+   if numComments==0:
+      return 1
    pointR=5
    scale=numComments*pointR
    scale=scale/biggestComment
-   scale+=1
+   scale+=3
    return scale
 
 def getPostsNoRepliesBronco():
