@@ -339,6 +339,11 @@ def testPosts():
       print pID
       print posts[pID]
 
+def getNumCommentsPost():
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   for pID in postsWithComments:
+      if len(postsWithComments[pID])>0:
+         print str(pID)+","+str(len(postsWithComments[pID]))
 def participationRatePerYear():
 
    postsWithComments = pickle.load(open("postsComments.p", "rb"))
@@ -578,7 +583,26 @@ def getpostDates():
       #print str(p)+","+str(postDate[p])
    return postDate
 
+def getBiggestNumComment():
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
+   biggestComment=0
+   for pID in postsWithComments:
+
+      numComments=len(postsWithComments[pID])
+      if numComments>biggestComment:
+         biggestComment=numComments
+   #print biggestComment
+   return biggestComment
+def getScaleComments(numComments,biggestComment):
+   pointR=5
+   scale=numComments*pointR
+   scale=scale/biggestComment
+   scale+=1
+   return scale
+
 def getPostsNoRepliesBronco():
+   biggestNumComment=getBiggestNumComment()
+   postsWithComments = pickle.load(open("postsComments.p", "rb"))
    datesPostIDs = pickle.load(open("datesPostIDs.p", "rb"))
    postDate=getpostDates()
    postCommentedByBronco = pickle.load(open("postCommentedByBronco.p", "rb"))
@@ -594,17 +618,36 @@ def getPostsNoRepliesBronco():
 
    sorted_postDate = sorted(postDate.items(), key=operator.itemgetter(1),reverse=False)
    FILE=open("broncpCommentsPost.txt",'w')
+   FILE2=open("broncpCommentsPost.csv",'w')
+   #FILE=
    i=0
+   FILE2.write("postID,numComments,scale\n")
    for pID,date in sorted_postDate:
       posts=datesPostIDs[date]
+      if pID in postsWithComments:
+         #print "found:"+str(pID)
+         numComments=len(postsWithComments[pID])
+      else:
+         numComments=0
+
+      scaleValueComments=getScaleComments(numComments,biggestNumComment)
+      numCommentsBronco=postsAllB[pID]
+      print "NUm comments:"+str(numComments)+","+str(scaleValueComments)
+      FILE2.write(str(i)+","+str(numCommentsBronco)+","+str(scaleValueComments)+"\n")
+
+      i+=1
+
       for pID in posts:
          texto=posts[pID]
       print str(date)+","+str(postsAllB[pID])
       FILE.write(str(i)+"\n")
       FILE.write(str(date)+","+str(postsAllB[pID])+",\n"+str(texto)+"\n\n")
-      #str(postsAllB[pID])
-      i+=1
+      FILE.write("Num comments:"+str(numComments)+"\n")
+      
+      #i+=1
    FILE.close()
+   FILE2.close()
+   #getNormalizedValuesComments()
    #for pID,v in sorted_postsAllB:
    #   print str(pID)+","+str(v)
 
@@ -1440,8 +1483,10 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
+#getNumCommentsPost()
 
 getPostsNoRepliesBronco()
+#getPostsNoRepliesBronco()
 #getTopPostsBroncoCommented()
 #infoToPosts()
 #getpostDates()
