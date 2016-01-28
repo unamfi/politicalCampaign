@@ -565,8 +565,125 @@ def getPostsWithBroncoCommentsAll():
    FILE.close()
    pickle.dump(postCommentedByBronco, open("postCommentedByBronco.p", "wb"))
    #postCommentedByBronco
-def getPostsWithNoRepliesBronco():
+
+def getpostDates():
+   postDate={}
+   datesPostIDs = pickle.load(open("datesPostIDs.p", "rb"))
+   for date in datesPostIDs:
+      #@print date
+      posts=datesPostIDs[date]
+      for p in posts:
+         postDate[p]=date
+   #for p in postDate:
+      #print str(p)+","+str(postDate[p])
+   return postDate
+
+def getPostsNoRepliesBronco():
+   postDate=getpostDates()
    postCommentedByBronco = pickle.load(open("postCommentedByBronco.p", "rb"))
+   postsAllB={}
+
+   for pID in postDate:
+      #print pID
+      if pID in postCommentedByBronco:
+         #print pID
+         #print postCommentedByBronco[pID]
+         #print 
+         postsAllB[pID]=postCommentedByBronco[pID]
+      else:
+         postsAllB[pID]=0
+
+   sorted_postDate = sorted(postDate.items(), key=operator.itemgetter(1),reverse=False)
+   FILE=open("broncpCommentsPost.csv",'w')
+   for pID,date in sorted_postDate:
+      print str(date)+","+str(postsAllB[pID])
+      FILE.write(str(date)+","+str(postsAllB[pID])+"\n")
+   FILE.close()
+   #for pID,v in sorted_postsAllB:
+   #   print str(pID)+","+str(v)
+
+   #for pID in postsAllB:
+
+         #postsAll
+   #found=0
+   #notFound=0
+   #postsAll={}
+   #for p in postCommentedByBronco:
+   #   if p in postDate:
+   #      print str(p)+","+str(postCommentedByBronco[p])
+   #      postsAll[p]=postCommentedByBronco[p]
+   #      found+=1
+   #   else:
+   #      notFound+=0
+   #print found
+   #print notFound
+   #print len(postsAll)
+   #for date in postDate:
+      #print date
+   #   pID=postDate[date]
+   #   print date
+   #   print pID
+
+      #if pID in postsAll:
+      #   postsAll[pID]=0
+      #   print 0
+      #for p in posts:
+      #   print str(p)+","+str(posts[p])
+      #postsAll[p]
+
+
+
+def getPostsWithNoRepliesBronco():
+   postsNoreplies={}
+   datesPostIDs = pickle.load(open("datesPostIDs.p", "rb"))
+   postCommentedByBronco = pickle.load(open("postCommentedByBronco.p", "rb"))
+   sorted_datesPostIDs = sorted(datesPostIDs.items(), key=operator.itemgetter(0),reverse=False)
+   FILE=open("broncoCommentsPostsAll.csv",'w')
+   i=0
+   for date,posts in sorted_datesPostIDs:
+      
+      for pID in posts:
+         i+=1
+         if pID in postCommentedByBronco:
+            numCommentsBronco=postCommentedByBronco[pID]
+            #print str(date)
+            #print str(pID)+","+str(posts[pID])
+            #print numCommentsBronco
+         else:
+            numCommentsBronco=0
+            #postsNoreplies[pID]
+         print posts[pID]
+         postsNoreplies.setdefault(date,{})
+         postsNoreplies[date][pID]=posts[pID]
+        # postsNoreplies[pID]=posts[pID]
+         FILE.write(str(i)+","+str(numCommentsBronco)+"\n")
+         print str(i)+","+str(numCommentsBronco)
+
+         print
+   FILE.close()
+   FILE=open("textoTopPostsBroncoNotCommented.txt",'w')
+   sorted_postsNoreplies = sorted(postsNoreplies.items(), key=operator.itemgetter(0),reverse=False)
+   i=0
+   for date,posts in sorted_postsNoreplies:
+      print date
+      FILE.write("date:"+str(date)+"\n")
+      for pID in posts:
+         print str(pID)+","+str(i)+","+str(posts[pID])
+         FILE.write(str(i)+","+str(posts[pID])+"\n\n")
+         i+=1
+   FILE.close()
+
+
+
+      #print str(date)+","+str(postID)
+      #text=postsNoreplies[date][postID]
+      #print text
+   
+   
+
+
+
+
 
 def getPostsWithBroncoComments():
    #pickle.dump(topPostsBroncoC, open("topPostsBroncoC.p", "wb"))
@@ -1317,10 +1434,13 @@ def getPostDataFrom():
          m+=1
       #print numPosts
       #print numPosts
+
+getPostsNoRepliesBronco()
 #getTopPostsBroncoCommented()
 #infoToPosts()
-
-getPostsWithBroncoCommentsAll()
+#getpostDates()
+#getPostsWithNoRepliesBronco()
+#getPostsWithBroncoCommentsAll()
 #getTopPostsBroncoCommented()
 #testComments()
 #getHistogramRepliesBronco()
