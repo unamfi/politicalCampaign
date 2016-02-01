@@ -27,6 +27,50 @@ def correctCSVComments():
          #break
       #print('Row #' + str(exampleReader.line_num) + ' ' + str(row))
 
+
+def testComments():
+	postsWithComments = pickle.load(open("postsComments.p", "rb"))
+	#for pID in postsWithComments:
+	#	come
+		#print pID
+
+def getPostTest():
+	postsWithComments = pickle.load(open("postsComments.p", "rb"))
+	datesPosts = pickle.load(open("datesPostIdsTest.p", "rb"))
+	sorted_datesPosts = sorted(datesPosts.items(), key=operator.itemgetter(0),reverse=False)
+	comentariosResponses={}
+	for d,posts in sorted_datesPosts:
+		print str(d)
+		for pID in posts:
+			#print pID
+			keys=posts[pID]
+			#print posts[pID]["url"]
+			comments=postsWithComments[pID]
+			#print len(comments)
+			for cID in comments:
+				mensaje=comments[cID]["message"]
+				comentariosResponses.setdefault(cID,0)
+				if "bailar" in mensaje:
+					print mensaje
+					print
+				#print comments[cID]["message"]
+				#print
+			#for k in keys:
+			#	print k
+		#+","+str(v)
+		break
+	#607377
+	#607378
+	#607379
+	#607380
+	print len(comentariosResponses)
+	for pID in postsWithComments:
+		print pID
+	#for idC in comentariosResponses:
+	#	if idC in postsWithComments:
+	#		print idC
+		#print idC
+
 def getNumPhotosVideoShared():
    urlsFinal={}
    videoKeywords={}
@@ -1300,6 +1344,65 @@ def getUsers():
    pickle.dump(userIDs, open("userIDs.p", "wb"))
    pickle.dump(userFBIDs, open("userFBIDs.p", "wb"))
 
+def getCommentsAsTest():
+	db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+                     user="root",         # your username
+                     passwd="nathan",  # your password
+                     db="politics")        # name of the data base
+   	cur = db.cursor()
+   	# Use all the SQL you like
+   	cur.execute("SELECT * FROM comment;")
+   	print "got comments!"
+   	posts={}
+   	weirdos=0
+   	notWeird=0
+   	for row in cur.fetchall():
+   		lengthRow=len(row)
+   		if not lengthRow==9:
+   			print row
+   			weirdos+=1
+   		else:
+   			notWeird+=1
+   	print weirdos
+   	print notWeird
+   		#break
+      	#print row
+      	#(1L, 1L, '942629425803577_942642459135607', 2L, 'Andeleee asi siii!!!', 0, datetime.datetime(2015, 11, 25, 3, 23, 13), 2L, 0)
+      	#print len(row)
+      	#break
+
+      #idComment=row[0]
+      #idPost=row[1]
+      #fbLink=row[2]
+      #user=row[3]
+      #message=row[4]
+      #canRemove=row[5]
+      #time=row[6]
+      #likeCount=row[7]
+      #userLike=row[8]
+      #posts.setdefault(idPost,{})
+      #posts[idPost][idComment]={}
+      #posts[idPost][idComment]["user"]=user
+      #posts[idPost][idComment]["time"]=time
+      #posts[idPost][idComment]["message"]=message
+      #posts[idPost][idComment]["likeCount"]=likeCount
+      #posts[idPost][idComment]["userLike"]=userLike
+      #posts[idPost][idComment]["canRemove"]=canRemove
+
+
+
+
+      #break
+      #posts[idPost][idComment]["message"]=message
+      #print "IDComment:"+str(idComment)
+      #print "IDPost:"+str(idPost)
+      #print "user:"+str(user)
+      #print "message:"+str(message)
+      #print "time"+str(time)
+      #print "likeCount:"+str(likeCount)
+      #print "UserlikeCount:"+str(userLike)
+      #print fbLink
+   #pickle.dump(posts, open("commentsTest.p", "wb"))
 
 def getCommentsPostWithLikes():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -1450,39 +1553,42 @@ def getPostIDs():
       link=row[10]
       message=row[12]
       shares=row[19]
-      postsCompletos.setdefault(idPost,{})
-      print link
-      print message
-      print shares
+
+      #postsCompletos.setdefault(idPost,{})
+      postsDates={}
+      #print link
+      #print message
+      #print shares
       i=0
-      print
-      for key in row:
-         print str(i)+","+str(key)
-         i+=1
+      #print
+      #for key in row:
+      #   print str(i)+","+str(key)
+      #   i+=1
       #print row
-      break
+      #break
       
-      #if not date==None:
-      #   tipoPost=row[11]
-      #   texto=row[12]
-      #   url=row[10]
+      if not date==None:
+        tipoPost=row[11]
+        texto=row[12]
+        url=row[10]
 
-      #   if not tipoPost==None:
-      #      dates.setdefault(date,{})
-      #      datesPostIds.setdefault(date,{})
-      #      datesPostIds[date][idPost]={}
-      #      datesPostIds[date][idPost]["tipoPost"]=tipoPost
-      #      datesPostIds[date][idPost]["url"]=url
-      #      datesPostIds[date][idPost]["texto"]=texto
+        if not tipoPost==None:
+			dates.setdefault(date,{})
+			datesPostIds.setdefault(date,{})
+			datesPostIds[date][idPost]={}
+			datesPostIds[date][idPost]["tipoPost"]=tipoPost
+			datesPostIds[date][idPost]["url"]=url
+			datesPostIds[date][idPost]["texto"]=texto
 
 
-      #      dates[date].setdefault(tipoPost,{})
-      #      dates[date][tipoPost][url]=texto
+			dates[date].setdefault(tipoPost,{})
+			dates[date][tipoPost][url]=texto
             
       #      numPosts+=1
       #break
-   #pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
+	pickle.dump(datesPostIds, open("datesPostIdsTest.p", "wb"))
    #print len(datesPostIds)
+
 
 def getDatesPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -1614,7 +1720,10 @@ def getPostDataFrom():
 
 #testAllComments()
 
-getCommentsPostFinal()
+getCommentsAsTest()
+#getPostTest()
+#getPostIDs()
+#getCommentsPostFinal()
 
 
 #getPostIDs()
