@@ -8,6 +8,7 @@ from common import _call_and_retry
 graph = None
 
 
+
 def update_user_data(user, new_data):
     '''Updates the user object with interesting data from new_data'''
     logger = logging.getLogger('root')

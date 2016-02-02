@@ -1356,15 +1356,17 @@ def getCommentsAsTest():
    	posts={}
    	weirdos=0
    	notWeird=0
-   	for row in cur.fetchall():
-   		lengthRow=len(row)
-   		if not lengthRow==9:
-   			print row
-   			weirdos+=1
-   		else:
-   			notWeird+=1
-   	print weirdos
-   	print notWeird
+   	#for row in cur.fetchall():
+   		#lengthRow=len(row)
+   		#if not lengthRow==9:
+            #print row
+            #postID=row[1]
+       #     weirdos+=1
+   	#	else:
+   	#		notWeird+=1
+   	#print weirdos
+   	#print notWeird
+      #print postID
    		#break
       	#print row
       	#(1L, 1L, '942629425803577_942642459135607', 2L, 'Andeleee asi siii!!!', 0, datetime.datetime(2015, 11, 25, 3, 23, 13), 2L, 0)
@@ -1451,11 +1453,113 @@ def getCommentsPostWithLikes():
       #print fbLink
    pickle.dump(posts, open("postsCommentsAllValues.p", "wb"))
 
+def pruebaComentarios():
+   #https://www.facebook.com/JaimeRodriguezElBronco/photos/a.436769073056284.100440.259659740767219/666220886777767/?type=3&theater
+   datesPostIds = pickle.load(open("datesPostIDs.p", "rb"))
+   
+   idPostPrueba=4540
+   idCommentPrueba=760729
+   postsWithComments = pickle.load(open("postsCommentsAllValues.p", "rb"))
+   comentarios=postsWithComments[idPostPrueba]
+   print len(comentarios)
+   i=0
+   mensaje=comentarios[idCommentPrueba]["message"]
+   likeCount=comentarios[idCommentPrueba]["likeCount"]
+   userLike=comentarios[idCommentPrueba]["userLike"]
+   canRemove=comentarios[idCommentPrueba]["canRemove"]
+   print mensaje
+   print likeCount
+   print userLike
+   print canRemove
+
+   
+
+   #posts[idPost][idComment]["user"]=user
+   #posts[idPost][idComment]["time"]=time
+   #posts[idPost][idComment]["message"]=message
+   #posts[idPost][idComment]["likeCount"]=likeCount
+   #posts[idPost][idComment]["userLike"]=userLike
+   #posts[idPost][idComment]["canRemove"]=canRemove
+   
+   #sorted_datesPostIds= sorted(datesPostIds.items(), key=operator.itemgetter(0),reverse=True)
+   #for date,posts in sorted_datesPostIds:
+      
+   #   for pID in posts:
+         
+   #      mensajePost=posts[pID]
+   #      if not mensajePost==None:
+   #         if mensaje in mensajePost:
+   #            print mensaje
+         
+
+
+         #texto=datesPostIds[date][pID]["texto"]
+         #print texto
+
+      #datesPostIds[date][idPost]["texto"]=texto
+
+      #for pID in posts:
+      #   print pID
+
+
+   #for p,keys in sorted_postsWithComments:
+   #   for key in keys:
+   #      print key
+   #      break
+      #print p
+      #print v['message']
+     # {'userLike': 0, 'likeCount': 0L, 'user': 49403L, 'time': datetime.datetime(2015, 7, 28, 18, 12, 1), 'message': 'Falta civilidad, los profesores ni siquiera pueden formar a los ni\xf1os para honores,', 'canRemove': 0}
+   #   break
+   #if idCommentPrueba in postsWithComments:
+   #   print "found"
+
+   #for cID in comentarios:
+   #   message=comentarios[cID]["message"]
+   #   print str(cID)+","+message
+   #   i+=1
+
+      #for key in comentarios[cID]:
+         #print key
+
+         #userLike
+         #likeCount
+         #user
+         #time
+         #message
+         #canRemove
+
 def testAllComments():
    postsWithComments = pickle.load(open("postsCommentsAllValues.p", "rb"))
    postsWithIDs = pickle.load(open("datesPostIds.p", "rb"))
-   for p in postsWithIDs:
-      print p
+   #postsWithIDs = pickle.load(open("datesPostIds.p", "rb"))
+
+   for date in postsWithIDs:
+      #print date
+      posts=postsWithIDs[date]
+      for p in posts:
+         
+         url=posts[p]["url"]
+         if url=="https://www.facebook.com/JaimeRodriguezElBronco/photos/a.436769073056284.100440.259659740767219/666220886777767/?type=3":
+            print p
+            print url
+            if p in postsWithComments:
+               print "FOUND!"+str(len(postsWithComments[p]))
+
+   #for idPost in 
+            #https://www.facebook.com/JaimeRodriguezElBronco/photos/a.436769073056284.100440.259659740767219/666220886777767/?type=3
+
+            #https://www.facebook.com/JaimeRodriguezElBronco/photos/a.917860318280488.1073741895.259659740767219/881915471874973/?type=3
+
+
+
+      #datesPostIds.setdefault(date,{})
+      #datesPostIds[date][idPost]={}
+      #datesPostIds[date][idPost]["tipoPost"]=tipoPost
+      #datesPostIds[date][idPost]["url"]=url
+      #datesPostIds[date][idPost]["texto"]=texto
+
+     # for key in postsWithIDs[p]:
+      #   print key
 
    #pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
    #pickle.dump(datesPostIds, open("datesPostIds.p", "wb"))
@@ -1590,6 +1694,9 @@ def getPostIDs():
    #print len(datesPostIds)
 
 
+#def testPosts():
+   # pickle.dump(datesPostIDs,open("datesPostIDs.p", "wb"))
+
 def getDatesPost():
    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
                      user="root",         # your username
@@ -1718,9 +1825,10 @@ def getPostDataFrom():
       #print numPosts
       #print numPosts
 
+pruebaComentarios()
 #testAllComments()
 
-getCommentsAsTest()
+#getCommentsAsTest()
 #getPostTest()
 #getPostIDs()
 #getCommentsPostFinal()
